@@ -31,6 +31,8 @@ import com.example.uwikaquicktypergame.ui.adapter.StageAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.appcompat.app.AlertDialog;
+
 public class MainActivity extends AppCompatActivity {
     private TextView textViewWelcome;
     private Button buttonLogout;
@@ -65,15 +67,32 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupRecyclerView() {
-        stageAdapter = new StageAdapter(stageList, stage -> {
-            // Ketika sebuah stage di-klik
-            Toast.makeText(this, "Loading " + stage.getName(), Toast.LENGTH_SHORT).show();
-            // Pindah ke GameActivity dengan membawa stage ID
-            Intent intent = new Intent(MainActivity.this, GameActivity.class);
-            intent.putExtra("STAGE_ID", stage.getId());
-            startActivity(intent);
+        stageAdapter = new StageAdapter(stageList, stage -> {        // Saat sebuah stage di-klik, tampilkan dialog pilihan
+            showStageOptionsDialog(stage);
         });
         recyclerViewStages.setAdapter(stageAdapter);
+    }
+
+    private void showStageOptionsDialog(Stage stage) {
+        CharSequence[] options = new CharSequence[]{"Start Game", "View Leaderboard"};
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(stage.getName()); // Judul dialog adalah nama stage
+        builder.setItems(options, (dialog, which) -> {
+            if (which == 0) {
+                // Pilihan "Start Game" (indeks 0)
+                Intent intent = new Intent(MainActivity.this, GameActivity.class);
+                intent.putExtra("STAGE_ID", stage.getId());
+                startActivity(intent);
+            } else {
+                // Pilihan "View Leaderboard" (indeks 1)
+                Intent intent = new Intent(MainActivity.this, ScoreActivity.class);
+                // Kirim hanya Stage ID, karena tidak ada hasil permainan
+                intent.putExtra("STAGE_ID_ONLY", stage.getId());
+                startActivity(intent);
+            }
+        });
+        builder.show();
     }
 
 

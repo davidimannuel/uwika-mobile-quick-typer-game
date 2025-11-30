@@ -19,6 +19,7 @@ import com.example.uwikaquicktypergame.R;
 import com.example.uwikaquicktypergame.model.Phrase;
 import com.example.uwikaquicktypergame.model.ScoreSubmissionRequest;
 import com.example.uwikaquicktypergame.model.ScoreSubmissionResponse;
+import com.example.uwikaquicktypergame.model.GameResult;
 import com.example.uwikaquicktypergame.model.StageDetail;
 import com.example.uwikaquicktypergame.network.ApiClient;
 import com.example.uwikaquicktypergame.network.ApiService;
@@ -240,6 +241,8 @@ public class GameActivity extends AppCompatActivity {
         submitScore(totalTimeMs, totalErrors);
     }
 
+    // di GameActivity.java
+
     private void submitScore(long time, int errors) {
         showLoading(true);
         String token = "Bearer " + sessionManager.fetchAuthToken();
@@ -254,15 +257,11 @@ public class GameActivity extends AppCompatActivity {
                     finalScore = response.body().getFinalScore();
                     Toast.makeText(GameActivity.this, "Score submitted successfully!", Toast.LENGTH_LONG).show();
                 } else {
-                    Toast.makeText(GameActivity.this, "Failed to submit score. You can see your result.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(GameActivity.this, "Failed to submit score. You can see your result.", Toast.LENGTH_LONG).show();
                 }
-                // ★★★ SELALU PINDAH HALAMAN ★★★
-                // Buat objek hasil untuk dikirim ke ScoreActivity
-                // com.example.uwikaquicktypergame.model.GameResult result = new com.example.uwikaquicktypergame.model.GameResult(stageId, finalScore, time, errors);
-                // Intent intent = new Intent(GameActivity.this, ScoreActivity.class);
-                // intent.putExtra("GAME_RESULT", result);
-                // startActivity(intent);
-                finish(); // Tutup GameActivity
+
+                // Pindah ke halaman skor dengan hasil yang didapat
+                moveToScoreActivity(finalScore, time, errors);
             }
 
             @Override
@@ -270,15 +269,21 @@ public class GameActivity extends AppCompatActivity {
                 showLoading(false);
                 Toast.makeText(GameActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
 
-                // ★★★ SELALU PINDAH HALAMAN ★★★
-                // com.example.uwikaquicktypergame.model.GameResult result = new com.example.uwikaquicktypergame.model.GameResult(stageId, 0, time, errors);
-                // Intent intent = new Intent(GameActivity.this, ScoreActivity.class);
-                // intent.putExtra("GAME_RESULT", result);
-                // startActivity(intent);
-                finish(); // Tutup GameActivity
+                // Pindah ke halaman skor meskipun gagal, dengan skor 0
+                moveToScoreActivity(0, time, errors);
             }
         });
     }
+
+    // Buat metode helper baru ini untuk menghindari duplikasi kode
+    private void moveToScoreActivity(int finalScore, long time, int errors) {
+        GameResult result = new GameResult(stageId, finalScore, time, errors);
+        Intent intent = new Intent(GameActivity.this, ScoreActivity.class);
+        intent.putExtra("GAME_RESULT", result);
+        startActivity(intent);
+        finish(); // Tutup GameActivity setelah pindah
+    }
+
 
     private void showLoading(boolean isLoading) {
         progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);

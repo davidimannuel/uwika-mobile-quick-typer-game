@@ -7,6 +7,8 @@ import com.example.uwikaquicktypergame.model.ScoreSubmissionRequest;
 import com.example.uwikaquicktypergame.model.ScoreSubmissionResponse;
 import com.example.uwikaquicktypergame.model.Stage;
 import com.example.uwikaquicktypergame.model.StageDetail;
+import com.example.uwikaquicktypergame.model.LeaderboardEntry;
+import retrofit2.http.Query;
 
 import java.util.List;
 
@@ -36,5 +38,12 @@ public interface ApiService {
 
     @POST("api/score/submit")
     Call<ScoreSubmissionResponse> submitScore(@Header("Authorization") String token, @Body ScoreSubmissionRequest request);
+
+    @GET("api/leaderboard")
+    Call<List<LeaderboardEntry>> getLeaderboard(
+            @Header("Authorization") String token,
+            @Query("stage_id") String stageId,
+            @Query("limit") int limit
+    );
 }
     
