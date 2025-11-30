@@ -4,78 +4,54 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="24dp"
     tools:context=".ui.MainActivity">
 
     <TextView
-        android:id="@+id/textViewTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="User Profile"
-        android:textSize="28sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="32dp"/>
-
-    <TextView
-        android:id="@+id/textViewLabelUsername"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Username:"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textViewTitle"
-        android:layout_marginTop="40dp" />
-
-    <TextView
-        android:id="@+id/textViewUsername"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        tools:text="testuser1"
-        android:textSize="18sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textViewLabelUsername" />
-
-    <TextView
-        android:id="@+id/textViewLabelUserId"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="User ID:"
-        android:layout_marginTop="16dp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textViewUsername" />
-
-    <TextView
-        android:id="@+id/textViewUserId"
+        android:id="@+id/textViewWelcome"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        tools:text="c6528376-cbee-4c5a-b40c-1b7ce5a5827c"
-        android:textSize="14sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textViewLabelUserId" />
-
-    <TextView
-        android:id="@+id/textViewLabelRole"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Role:"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:textStyle="bold"
+        android:layout_marginEnd="8dp"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toStartOf="@+id/buttonLogout"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textViewUserId" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Welcome, testuser!" />
 
-    <TextView
-        android:id="@+id/textViewRole"
+    <Button
+        android:id="@+id/buttonLogout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:text="user"
-        android:textSize="18sp"
+        android:layout_marginEnd="16dp"
+        android:text="Logout"
+        app:layout_constraintBottom_toBottomOf="@+id/textViewWelcome"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/textViewWelcome" />
+
+    <TextView
+        android:id="@+id/textViewSelectStage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="Select a Stage"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textViewLabelRole" />
+        app:layout_constraintTop_toBottomOf="@+id/textViewWelcome" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewStages"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewSelectStage"
+        tools:listitem="@layout/item_stage" />
 
     <ProgressBar
         android:id="@+id/progressBar"
@@ -85,17 +61,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/buttonLogout"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Logout"
-        android:backgroundTint="@color/design_default_color_error"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
-    

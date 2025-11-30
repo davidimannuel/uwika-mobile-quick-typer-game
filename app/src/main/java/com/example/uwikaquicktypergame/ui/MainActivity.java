@@ -22,74 +22,99 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity {
+import androidx.recyclerview.widget.RecyclerView;
 
-    private TextView textViewUsername, textViewUserId, textViewRole;
+import com.example.uwikaquicktypergame.model.ProfileResponse;
+import com.example.uwikaquicktypergame.model.Stage;
+import com.example.uwikaquicktypergame.ui.adapter.StageAdapter;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class MainActivity extends AppCompatActivity {
+    private TextView textViewWelcome;
     private Button buttonLogout;
+    private RecyclerView recyclerViewStages;
     private ProgressBar progressBar;
 
     private ApiService apiService;
     private SessionManager sessionManager;
+    private StageAdapter stageAdapter;
+    private List<Stage> stageList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Inisialisasi Views
-        textViewUsername = findViewById(R.id.textViewUsername);
-        textViewUserId = findViewById(R.id.textViewUserId);
-        textViewRole = findViewById(R.id.textViewRole);
+        // Inisialisasi
+        textViewWelcome = findViewById(R.id.textViewWelcome);
         buttonLogout = findViewById(R.id.buttonLogout);
+        recyclerViewStages = findViewById(R.id.recyclerViewStages);
         progressBar = findViewById(R.id.progressBar);
 
-        // Inisialisasi network dan session
         sessionManager = new SessionManager(this);
         apiService = ApiClient.getClient(this).create(ApiService.class);
 
-        // Fetch profile data
-        fetchUserProfile();
+        setupRecyclerView();
 
-        // Setup logout button
         buttonLogout.setOnClickListener(v -> logoutUser());
+
+        fetchUserProfile(); // Untuk mendapatkan nama user
+        fetchActiveStages(); // Untuk mengisi RecyclerView
     }
 
-    private void fetchUserProfile() {
+    private void setupRecyclerView() {
+        stageAdapter = new StageAdapter(stageList, stage -> {
+            // Ketika sebuah stage di-klik
+            Toast.makeText(this, "Loading " + stage.getName(), Toast.LENGTH_SHORT).show();
+            // Pindah ke GameActivity dengan membawa stage ID
+            Intent intent = new Intent(MainActivity.this, GameActivity.class);
+            intent.putExtra("STAGE_ID", stage.getId());
+            startActivity(intent);
+        });
+        recyclerViewStages.setAdapter(stageAdapter);
+    }
+
+
+    private void fetchActiveStages() {
         showLoading(true);
+        String token = "Bearer " + sessionManager.fetchAuthToken();
 
-        String token = sessionManager.fetchAuthToken();
-        if (token == null) {
-            // Ini seharusnya tidak terjadi jika alur login benar, tapi sebagai pengaman
-            // Interceptor di ApiClient akan menangani redirect
-            return;
-        }
-
-        // Menambahkan "Bearer " di depan token sesuai kontrak API
-        Call<ProfileResponse> call = apiService.getProfile("Bearer " + token);
-
-        call.enqueue(new Callback<ProfileResponse>() {
+        apiService.getActiveStages(token).enqueue(new Callback<List<Stage>>() {
             @Override
-            public void onResponse(@NonNull Call<ProfileResponse> call, @NonNull Response<ProfileResponse> response) {
+            public void onResponse(@NonNull Call<List<Stage>> call, @NonNull Response<List<Stage>> response) {
                 showLoading(false);
                 if (response.isSuccessful() && response.body() != null) {
-                    ProfileResponse profile = response.body();
-                    // Tampilkan data ke UI
-                    textViewUsername.setText(profile.getUsername());
-                    textViewUserId.setText(profile.getUserId());
-                    textViewRole.setText(profile.getRole());
+                    stageList.clear();
+                    stageList.addAll(response.body());
+                    stageAdapter.notifyDataSetChanged();
                 } else {
-                    // Jika gagal, interceptor di ApiClient akan auto-logout jika error 401
-                    // Jika error lain, tampilkan pesan
-                    if (response.code() != 401) {
-                        Toast.makeText(MainActivity.this, "Gagal memuat profil.", Toast.LENGTH_SHORT).show();
-                    }
+                    Toast.makeText(MainActivity.this, "Failed to load stages.", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
-            public void onFailure(@NonNull Call<ProfileResponse> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<List<Stage>> call, @NonNull Throwable t) {
                 showLoading(false);
                 Toast.makeText(MainActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void fetchUserProfile() {
+        // (Kode fetchUserProfile yang sudah Anda miliki, ubah untuk set textViewWelcome)
+        String token = "Bearer " + sessionManager.fetchAuthToken();
+        apiService.getProfile(token).enqueue(new Callback<ProfileResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<ProfileResponse> call, @NonNull Response<ProfileResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    textViewWelcome.setText("Welcome, " + response.body().getUsername() + "!");
+                }
+            }
+            @Override
+            public void onFailure(@NonNull Call<ProfileResponse> call, @NonNull Throwable t) {
+                // Handle failure
             }
         });
     }
