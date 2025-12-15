@@ -4,75 +4,113 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/background"
     android:padding="16dp"
     tools:context=".ui.GameActivity">
 
-    <!-- Header Info -->
-    <TextView
-        android:id="@+id/textViewPhraseProgress"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="16sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="Phrase: 1 / 5" />
-
-    <TextView
-        android:id="@+id/textViewTimer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="0.00s" />
-
-    <!-- Phrase to Type -->
-    <TextView
-        android:id="@+id/textViewPhraseToType"
+    <!-- Progress bar horizontal di atas untuk progres keseluruhan stage -->
+    <ProgressBar
+        android:id="@+id/progressBarStage"
+        style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:background="#EFEFEF"
-        android:padding="16dp"
-        android:textSize="22sp"
-        android:gravity="center"
+        android:max="100"
+        android:progress="0"
+        android:progressTint="@color/accent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewPhraseProgress"
-        tools:text="public static void main(String[] args)" />
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- User Input -->
-    <EditText
-        android:id="@+id/editTextUserInput"
+    <!-- Mengelompokkan info timer dan progress frasa -->
+    <LinearLayout
+        android:id="@+id/linearLayoutInfo"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:hint="Start typing here..."
-        android:inputType="textNoSuggestions"
-        android:imeOptions="flagNoExtractUi"
-        android:textSize="22sp"
-        android:gravity="center"
+        android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewPhraseToType" />
+        app:layout_constraintTop_toBottomOf="@id/progressBarStage">
 
-    <!-- Error Count -->
+        <TextView
+            android:id="@+id/textViewPhraseProgress"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="@color/text_secondary"
+            android:textSize="16sp"
+            tools:text="Phrase: 1 / 5" />
+
+        <TextView
+            android:id="@+id/textViewTimer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_primary"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            tools:text="0.00s" />
+    </LinearLayout>
+
+    <!-- CardView untuk area game utama agar lebih fokus -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardGameArea"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/linearLayoutInfo">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <TextView
+                android:id="@+id/textViewPhraseToType"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:paddingBottom="8dp"
+                android:textColor="@color/text_primary"
+                android:textSize="22sp"
+                tools:text="public static void main" />
+
+            <EditText
+                android:id="@+id/editTextUserInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@android:color/transparent"
+                android:gravity="center"
+                android:hint="Start typing here..."
+                android:imeOptions="flagNoExtractUi"
+                android:inputType="textNoSuggestions"
+                android:textSize="22sp" />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <!-- Info Error Count -->
     <TextView
         android:id="@+id/textViewErrorLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:text="Errors:"
+        android:textColor="@color/text_secondary"
         android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextUserInput" />
+        app:layout_constraintTop_toBottomOf="@+id/cardGameArea" />
 
     <TextView
         android:id="@+id/textViewErrorCount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"        android:text="0"
+        android:layout_marginStart="8dp"
+        android:text="0"
         android:textColor="@color/error_red"
         android:textSize="18sp"
         android:textStyle="bold"
@@ -80,15 +118,16 @@
         app:layout_constraintStart_toEndOf="@+id/textViewErrorLabel"
         app:layout_constraintTop_toTopOf="@+id/textViewErrorLabel" />
 
-
+    <!-- Progress bar loading (di tengah layar) -->
     <ProgressBar
         android:id="@+id/progressBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="visible"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

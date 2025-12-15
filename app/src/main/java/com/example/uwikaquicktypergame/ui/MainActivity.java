@@ -27,6 +27,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.uwikaquicktypergame.model.ProfileResponse;
 import com.example.uwikaquicktypergame.model.Stage;
 import com.example.uwikaquicktypergame.ui.adapter.StageAdapter;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import androidx.appcompat.app.AlertDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +36,7 @@ import java.util.List;
 import androidx.appcompat.app.AlertDialog;
 
 public class MainActivity extends AppCompatActivity {
+    private FloatingActionButton fabTutorial;
     private TextView textViewWelcome;
     private Button buttonLogout;
     private RecyclerView recyclerViewStages;
@@ -54,6 +57,10 @@ public class MainActivity extends AppCompatActivity {
         buttonLogout = findViewById(R.id.buttonLogout);
         recyclerViewStages = findViewById(R.id.recyclerViewStages);
         progressBar = findViewById(R.id.progressBar);
+        fabTutorial = findViewById(R.id.fabTutorial);
+        fabTutorial.setOnClickListener(view -> {
+            showTutorialDialog();
+        });
 
         sessionManager = new SessionManager(this);
         apiService = ApiClient.getClient(this).create(ApiService.class);
@@ -64,6 +71,25 @@ public class MainActivity extends AppCompatActivity {
 
         fetchUserProfile(); // Untuk mendapatkan nama user
         fetchActiveStages(); // Untuk mengisi RecyclerView
+    }
+
+    private void showTutorialDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("How to Play");
+
+        String message = "Welcome to Quick Typer Game!\n\n" +
+                "1. Choose a stage from the list.\n" +
+                "2. You can either 'Start Game' or 'View Leaderboard'.\n" +
+                "3. When the game starts, type the given phrase as fast and accurately as you can.\n" +
+                "4. Your time and errors will be recorded.\n" +
+                "5. At the end, your final score will be calculated and you can see how you rank!\n\n" +
+                "Good luck and type fast!";
+
+        builder.setMessage(message);
+        builder.setPositiveButton("Got it!", (dialog, which) -> {
+            dialog.dismiss();
+        });
+        builder.create().show();
     }
 
     private void setupRecyclerView() {

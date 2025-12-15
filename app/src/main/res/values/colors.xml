@@ -3,5 +3,23 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="purple_700">#FF3700B3</color>
+    <!-- Warna Utama Aplikasi -->
+    <color name="primary">#6200EE</color> <!-- Ungu yang sudah ada, kita pertahankan -->
+    <color name="primary_dark">#3700B3</color>
+    <color name="primary_light">#BB86FC</color>
+
+    <!-- Warna Aksen (untuk tombol, progress, dll.) -->
+    <color name="accent">#03DAC5</color> <!-- Teal/Cyan -->
+
+    <!-- Warna Teks -->
+    <color name="text_primary">#212121</color> <!-- Hitam pekat -->
+    <color name="text_secondary">#757575</color> <!-- Abu-abu -->
+
+    <!-- Warna Latar Belakang -->
+    <color name="background">#F5F5F5</color> <!-- Abu-abu sangat terang -->
+    <color name="surface">#FFFFFF</color> <!-- Putih (untuk card, dialog) -->
+
+    <!-- Warna Status -->
     <color name="error_red">#D32F2F</color>
+    <color name="success_green">#388E3C</color>
 </resources>

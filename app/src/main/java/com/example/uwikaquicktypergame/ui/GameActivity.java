@@ -52,6 +52,8 @@ public class GameActivity extends AppCompatActivity {
 
     private int currentPhraseErrors = 0;
 
+    private ProgressBar progressBarStage;
+
     // Timer
     private Handler timerHandler = new Handler();
     private Runnable timerRunnable = new Runnable() {
@@ -92,6 +94,7 @@ public class GameActivity extends AppCompatActivity {
         textViewErrorCount = findViewById(R.id.textViewErrorCount);
         editTextUserInput = findViewById(R.id.editTextUserInput);
         progressBar = findViewById(R.id.progressBar);
+        progressBarStage = findViewById(R.id.progressBarStage);
 
         // Hide game elements until data is loaded
         editTextUserInput.setVisibility(View.GONE);
@@ -144,6 +147,10 @@ public class GameActivity extends AppCompatActivity {
             textViewPhraseProgress.setText(String.format(Locale.getDefault(), "Phrase: %d / %d", currentPhraseIndex + 1, phrases.size()));
             currentPhraseErrors = 0; // Reset error untuk setiap frasa baru
             textViewErrorCount.setText(String.valueOf(totalErrors)); // Tampilkan total error dari frasa sebelumnya
+
+            // Update progress bar horizontal
+            int progress = (int) (((float) currentPhraseIndex / phrases.size()) * 100);
+            progressBarStage.setProgress(progress);
         }
     }
 
@@ -239,6 +246,7 @@ public class GameActivity extends AppCompatActivity {
 
         // Panggil submitScore, yang SEKARANG akan menangani perpindahan activity
         submitScore(totalTimeMs, totalErrors);
+        progressBarStage.setProgress(100);
     }
 
     // di GameActivity.java
