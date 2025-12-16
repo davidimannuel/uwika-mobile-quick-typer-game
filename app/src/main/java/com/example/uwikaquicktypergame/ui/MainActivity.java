@@ -17,6 +17,7 @@ import com.example.uwikaquicktypergame.network.ApiClient;
 import com.example.uwikaquicktypergame.network.ApiService;
 import com.example.uwikaquicktypergame.ui.auth.LoginActivity;
 import com.example.uwikaquicktypergame.utils.SessionManager;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -41,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
     private Button buttonLogout;
     private RecyclerView recyclerViewStages;
     private ProgressBar progressBar;
-
+    private SwipeRefreshLayout swipeRefreshLayout;
     private ApiService apiService;
     private SessionManager sessionManager;
     private StageAdapter stageAdapter;
@@ -52,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        initViews();
         // Inisialisasi
         textViewWelcome = findViewById(R.id.textViewWelcome);
         buttonLogout = findViewById(R.id.buttonLogout);
@@ -67,10 +69,21 @@ public class MainActivity extends AppCompatActivity {
 
         setupRecyclerView();
 
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            fetchActiveStages();
+        });
+
         buttonLogout.setOnClickListener(v -> logoutUser());
 
         fetchUserProfile(); // Untuk mendapatkan nama user
         fetchActiveStages(); // Untuk mengisi RecyclerView
+    }
+
+    private void initViews() {
+        recyclerViewStages = findViewById(R.id.recyclerViewStages);
+        progressBar = findViewById(R.id.progressBar);
+        fabTutorial = findViewById(R.id.fabTutorial);
+        swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
     }
 
     private void showTutorialDialog() {
@@ -123,13 +136,18 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void fetchActiveStages() {
-        showLoading(true);
+        if (!swipeRefreshLayout.isRefreshing()) {
+            showLoading(true);
+        }
+
         String token = "Bearer " + sessionManager.fetchAuthToken();
 
         apiService.getActiveStages(token).enqueue(new Callback<List<Stage>>() {
             @Override
             public void onResponse(@NonNull Call<List<Stage>> call, @NonNull Response<List<Stage>> response) {
                 showLoading(false);
+                swipeRefreshLayout.setRefreshing(false);
+
                 if (response.isSuccessful() && response.body() != null) {
                     stageList.clear();
                     stageList.addAll(response.body());
@@ -178,11 +196,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showLoading(boolean isLoading) {
-        if (isLoading) {
-            progressBar.setVisibility(View.VISIBLE);
-        } else {
-            progressBar.setVisibility(View.GONE);
-        }
+        progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
     }
 }
     
